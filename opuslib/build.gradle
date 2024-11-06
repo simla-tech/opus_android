@@ -1,9 +1,12 @@
-import org.apache.tools.ant.taskdefs.condition.Os
+//import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.plugins.signing.Sign
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.jfrog.bintray'
 
+group = 'com.simla.android.opuslib'
 version = "1.0.2"
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -21,11 +24,11 @@ android {
     }
 
     task ndkBuild(type: Exec) {
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        //if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             commandLine 'ndk-build.cmd', '-C', file('src/main/jni').absolutePath
-        } else {
-            commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath
-        }
+        //} else {
+        //    commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath
+        //}
     }
 
     tasks.withType(JavaCompile) {
@@ -50,7 +53,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 }
 
-
+/*
 def siteUrl = 'https://github.com/louisyonge/opus_android'      // Project url
 def gitUrl = 'https://github.com/louisyonge/opus_android.git'   // Git url
 group = "top.oply.opuslib"                                        // Maven Group ID for the artifact，usually it's package name.
@@ -86,6 +89,8 @@ install {
         }
     }
 }
+// */
+
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
@@ -102,6 +107,8 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+/*
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {
@@ -115,5 +122,21 @@ bintray {
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
         publish = true
+    }
+}
+// */
+
+apply from: rootProject.file('gradle/gradle-maven.gradle')
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it instanceof Sign }) {
+
+        def id = "INSERT KEY ID HERE"
+        def file = project.file('INSERT RELATIVE PATH TO GPG FILE HERE').absolutePath
+        def password = "INSERT KEY PASSWORD HERE"
+
+        allprojects { ext."signing.keyId" = id }
+        allprojects { ext."signing.secretKeyRingFile" = file }
+        allprojects { ext."signing.password" = password }
     }
 }
