@@ -5,7 +5,7 @@ apply plugin: 'com.android.library'
 //apply plugin: 'com.jfrog.bintray'
 
 group = 'com.simla.android.opuslib'
-version = "1.0.2"
+version = "1.0.3"
 
 android {
     compileSdkVersion 22
