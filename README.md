@@ -1,5 +1,9 @@
-## NOTE: THIS PROJECT IS DEPRECATED. This project is no longer being maintained.
+## NOTE 2
 
+This is a fork of OpusLib that was created for the purpose of re-publishing the library, as it was no longer available in previous repository. Check out the [Integration](#integration) section for new artifact location.
+
+
+## NOTE: THIS PROJECT IS DEPRECATED. This project is no longer being maintained.
 
 
 # Opus for Android
@@ -13,7 +17,7 @@ This is an Android library transplanted from official Opus codec. With this libr
 ## Integration
 Add the following dependency to your project.
 ```
-compile 'top.oply.opuslib:opuslib:1.0.2'
+implementation 'com.simla.android.opuslib:opuslib:1.0.3'
 ```
 
 ### How to use the OpusLib codes (Method 1)
