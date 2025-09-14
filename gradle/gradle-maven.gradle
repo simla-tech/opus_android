@@ -1,63 +1,59 @@
 apply plugin: "maven-publish"
 apply plugin: "signing"
 
-afterEvaluate {
-    def releaseComponent = components.findByName("release") ?: components.findByName("debug")
-    if (releaseComponent == null) {
-        throw new GradleException("No component found to publish! Make sure this is an Android Library module with a release build type.")
-    }
+publishing {
+    publications {
+        release(MavenPublication) {
 
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from releaseComponent
+            afterEvaluate {
+                from components.release
+            }
 
-                groupId = "top.oply"
-                artifactId = "opuslib"
-                version = "1.0.0"
+            pom {
+                name.set("OpusLib")
+                description.set("Re-publishing of OpusLib with no additional functionality.")
+                url.set("https://github.com/simla-tech/opus_android")
 
-                pom {
-                    name.set("OpusLib")
-                    description.set("Re-publishing of OpusLib with no additional functionality.")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("SimlaTech")
+                        name.set("Simla Mobile Dev Team")
+                        email.set(System.getenv("SIMLA_TECH_EMAIL"))
+                    }
+                }
+
+                scm {
                     url.set("https://github.com/simla-tech/opus_android")
-
-                    licenses {
-                        license {
-                            name.set("The Apache License, Version 2.0")
-                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                            distribution.set("repo")
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id.set("SimlaTech")
-                            name.set("Simla Mobile Dev Team")
-                            email.set(System.getenv("SIMLA_TECH_EMAIL"))
-                        }
-                    }
-
-                    scm {
-                        url.set("https://github.com/simla-tech/opus_android")
-                        connection.set("scm:git:git://github.com/simla-tech/opus_android.git")
-                        developerConnection.set("scm:git:ssh://github.com/simla-tech/opus_android.git")
-                    }
-                }
-            }
-        }
-
-        repositories {
-            maven {
-                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = System.getenv("OSSRH_USERNAME")
-                    password = System.getenv("OSSRH_PASSWORD")
+                    connection.set("scm:git:git://github.com/simla-tech/opus_android.git")
+                    developerConnection.set("scm:git:ssh://github.com/simla-tech/opus_android.git")
                 }
             }
         }
     }
 
-    signing {
-        sign publishing.publications.release
+    repositories {
+        maven {
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
     }
+}
+
+signing {
+    def signingKeyId = findProperty("signingKeyId") ?: System.getenv("SIGNING_KEY_ID")
+    def signingKey = findProperty("signingKey") ?: System.getenv("SIGNING_KEY")
+    def signingPassword = findProperty("signingKeyPassword") ?: System.getenv("SIGNING_KEY_PASSWORD")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    sign publishing.publications.release
 }

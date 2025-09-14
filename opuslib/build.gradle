@@ -12,7 +12,7 @@ android {
     defaultConfig {
         minSdk = 15
         targetSdkVersion 36
-        version = "1.0.4"
+        version = "1.0.3"
     }
 
     buildTypes {
@@ -27,20 +27,15 @@ android {
             zipAlignEnabled false
         }
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 }
-
-//gradle.taskGraph.whenReady { taskGraph ->
-//    if (taskGraph.allTasks.any { it.name.startsWith("sign") }) {
-//        def keyId = "INSERT KEY ID HERE"
-//        def secretKeyFile = file("INSERT RELATIVE PATH TO GPG FILE HERE").absolutePath
-//        def keyPassword = "INSERT KEY PASSWORD HERE"
-//
-//        ext["signing.keyId"] = keyId
-//        ext["signing.secretKeyRingFile"] = secretKeyFile
-//        ext["signing.password"] = keyPassword
-//    }
-//}
