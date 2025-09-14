@@ -1,48 +1,59 @@
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: "maven-publish"
+apply plugin: "signing"
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: System.getenv("OSSRH_USERNAME"), password: System.getenv("OSSRH_PASSWORD"))
+publishing {
+    publications {
+        release(MavenPublication) {
+
+            afterEvaluate {
+                from components.release
             }
 
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            pom.project {
-                name 'OpusLib'
-                description 'Re-publishing of OpusLib with no additional functionality.'
-                url 'https://github.com/simla-tech/opus_android'
+            pom {
+                name.set("OpusLib")
+                description.set("Re-publishing of OpusLib with no additional functionality.")
+                url.set("https://github.com/simla-tech/opus_android")
 
                 licenses {
                     license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
                     }
                 }
 
                 developers {
                     developer {
-                        id 'SimlaTech'
-                        name 'Simla Mobile Dev Team'
-                        email System.getenv("SIMLA_TECH_EMAIL")
+                        id.set("SimlaTech")
+                        name.set("Simla Mobile Dev Team")
+                        email.set(System.getenv("SIMLA_TECH_EMAIL"))
                     }
                 }
 
                 scm {
-                    url 'https://github.com/simla-tech/opus_android'
-                    connection 'scm:git:git://github.com/simla-tech/opus_android.git'
-                    developerConnection 'scm:git:ssh://github.com/simla-tech/opus_android.git'
+                    url.set("https://github.com/simla-tech/opus_android")
+                    connection.set("scm:git:git://github.com/simla-tech/opus_android.git")
+                    developerConnection.set("scm:git:ssh://github.com/simla-tech/opus_android.git")
                 }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
             }
         }
     }
 }
 
-// Configure signing for all artifacts in 'archives' configuration
 signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
+    def signingKeyId = findProperty("signingKeyId") ?: System.getenv("SIGNING_KEY_ID")
+    def signingKey = findProperty("signingKey") ?: System.getenv("SIGNING_KEY")
+    def signingPassword = findProperty("signingKeyPassword") ?: System.getenv("SIGNING_KEY_PASSWORD")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    sign publishing.publications.release
 }
