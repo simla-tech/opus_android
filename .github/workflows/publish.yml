@@ -36,12 +36,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: launch library publish task
+      - name: publish artefact to local Maven repository
         env:
           SIMLA_MOBILE_APPS_EMAIL: ${{ secrets.SIMLA_MOBILE_APPS_EMAIL }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-        run: ./gradlew :opuslib:publishReleasePublicationToMavenRepository --stacktrace
+        run: ./gradlew :opuslib:publishReleasePublicationToLocalRepoRepository --stacktrace
+
+      - name: Upload repo as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-maven-repo
+          path: opuslib/build/repo
+          if-no-files-found: error

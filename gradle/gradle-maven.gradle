@@ -4,15 +4,19 @@ apply plugin: "signing"
 publishing {
     publications {
         release(MavenPublication) {
-
+            groupId = 'com.simla.android.opuslib'
+            
             afterEvaluate {
                 from components.release
             }
+            artifactId = project.name
 
             pom {
                 name.set("OpusLib")
                 description.set("Re-publishing of OpusLib with no additional functionality.")
                 url.set("https://github.com/simla-tech/opus_android")
+
+
 
                 licenses {
                     license {
@@ -40,12 +44,12 @@ publishing {
     }
 
     repositories {
+        // локальный репозиторий
+        // собранный артефакт надо будет скачать и загрузить в maven central repository (https://central.sonatype.com/publishing)
+        // документация: https://central.sonatype.org/publish/publish-portal-upload/
         maven {
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
-            }
+            name = "localRepo"
+            url = uri(layout.buildDirectory.dir("repo"))
         }
     }
 }
