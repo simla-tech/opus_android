@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdint.h>
+#include <string.h>
 
 int encode(char *, char *,char *);
 
@@ -20,6 +21,8 @@ long getTotalPcmDuration(void);
 int getFinished(void);
 
 int getSize(void);
+
+int getChannelCount();
 
 long getPcmOffset(void);
 

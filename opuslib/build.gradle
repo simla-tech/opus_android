@@ -8,9 +8,10 @@ apply from: "$rootDir/gradle/gradle-maven.gradle"
 android {
     namespace = "top.oply.opuslib"
     compileSdk = 36
+    ndkVersion = "28.0.13004108"
 
     defaultConfig {
-        minSdk = 15
+        minSdk = 21
         targetSdkVersion 36
         version = "1.0.4"
     }
@@ -34,8 +35,10 @@ android {
             withJavadocJar()
         }
     }
-}
 
-dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+    externalNativeBuild {
+        ndkBuild {
+            path = file("src/main/jni/Android.mk")
+        }
+    }
 }

@@ -19,6 +19,7 @@
 #endif
 
 #include "internal.h"
+#include "os_support.h"
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,9 +3,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 #include the .mk files
-include celt_sources.mk
-include silk_sources.mk
-include opus_sources.mk
+include $(LOCAL_PATH)/silk_sources.mk
+include $(LOCAL_PATH)/celt_sources.mk
+include $(LOCAL_PATH)/opus_sources.mk
 
 MY_MODULE_DIR       := opustool
 
